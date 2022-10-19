@@ -25,10 +25,10 @@
 
 ################################################################################
 # Imports
-import streamlit as st
-from dataclasses import dataclass
-from typing import Any, List
-from web3 import Web3
+import streamlit   as st
+from   dataclasses import dataclass
+from   typing      import Any , List
+from   web3        import Web3
 w3 = Web3(Web3.HTTPProvider('HTTP://127.0.0.1:7545'))
 ################################################################################
 # Step 1:
@@ -81,46 +81,56 @@ w3 = Web3(Web3.HTTPProvider('HTTP://127.0.0.1:7545'))
 #  and send_transaction
 # YOUR CODE HERE
 
+from crypto_wallet import generate_account , get_balance , send_transaction
+
+
 ################################################################################
 # Fintech Finder Candidate Information
 
 # Database of Fintech Finder candidates including their name, digital address, rating and hourly cost per Ether.
-# A single Ether is currently valued at $1,500
-candidate_database = {
-    "Lane": ["Lane", "0xaC8eB8B2ed5C4a0fC41a84Ee4950F417f67029F0", "4.3", .20, "Images/lane.jpeg"],
-    "Ash": ["Ash", "0x2422858F9C4480c2724A309D58Ffd7Ac8bF65396", "5.0", .33, "Images/ash.jpeg"],
-    "Jo": ["Jo", "0x8fD00f170FDf3772C5ebdCD90bF257316c69BA45", "4.7", .19, "Images/jo.jpeg"],
-    "Kendall": ["Kendall", "0x8fD00f170FDf3772C5ebdCD90bF257316c69BA45", "4.1", .16, "Images/kendall.jpeg"]
-}
+# A single Ether is currently valued at $1,500 <--- AT LEAST FOR THIS CHALLENGE IT IS
+candidate_db = {
+                "Lane"    :[ "Lane"    , "0xaC8eB8B2ed5C4a0fC41a84Ee4950F417f67029F0" , "4.3" , .20 , "Images/lane.jpeg"    ],
+                "Ash"     :[ "Ash"     , "0x2422858F9C4480c2724A309D58Ffd7Ac8bF65396" , "5.0" , .33 , "Images/ash.jpeg"     ],
+                "Jo"      :[ "Jo"      , "0x8fD00f170FDf3772C5ebdCD90bF257316c69BA45" , "4.7" , .19 , "Images/jo.jpeg"      ],
+                "Kendall" :[ "Kendall" , "0x8fD00f170FDf3772C5ebdCD90bF257316c69BA45" , "4.1" , .16 , "Images/kendall.jpeg" ],
+               }
 
 # A list of the FinTech Finder candidates first names
-people = ["Lane", "Ash", "Jo", "Kendall"]
+people = [
+          "Lane"    ,
+          "Ash"     ,
+          "Jo"      ,
+          "Kendall" ,
+         ]
 
 
 def get_people(w3):
     """Display the database of Fintech Finders candidate information."""
-    db_list = list(candidate_database.values())
 
-    for number in range(len(people)):
-        st.image(db_list[number][4], width=200)
-        st.write("Name: ", db_list[number][0])
-        st.write("Ethereum Account Address: ", db_list[number][1])
-        st.write("FinTech Finder Rating: ", db_list[number][2])
-        st.write("Hourly Rate per Ether: ", db_list[number][3], "eth")
-        st.text(" \n")
+
+    db_list = list( candidate_db.values() )
+
+    for number in range( len(people) ):
+        st.image(                                db_list[number][4] , width=200 )
+        st.write( "Name: "                     , db_list[number][0] ,       )
+        st.write( "Ethereum Account Address: " , db_list[number][1] ,       )
+        st.write( "FinTech Finder Rating: "    , db_list[number][2] ,       )
+        st.write( "Hourly Rate per Ether: "    , db_list[number][3] , "eth" )
+        st.text ( " \n" )
 
 ################################################################################
 # Streamlit Code
 
 # Streamlit application headings
-st.markdown("# Fintech Finder!")
-st.markdown("## Hire A Fintech Professional!")
-st.text(" \n")
+st.markdown( "# Fintech Finder!"               )
+st.markdown( "## Hire A Fintech Professional!" )
+st.text    ( " \n" )
 
 ################################################################################
 # Streamlit Sidebar Code - Start
 
-st.sidebar.markdown("## Client Account Address and Ethernet Balance in Ether")
+st.sidebar.markdown( "## Client Account Address & Ethernet Balance in Ether" ) #I FEEL LIKE THIS SHOULDN'T BE "ETHERNET" but ill leave it
 
 ##########################################
 # Step 1 - Part 4:
@@ -132,10 +142,12 @@ st.sidebar.markdown("## Client Account Address and Ethernet Balance in Ether")
 #  Call the `generate_account` function and save it as the variable `account`
 # YOUR CODE HERE
 
+account = generate_account()
+
 ##########################################
 
 # Write the client's Ethereum account address to the sidebar
-st.sidebar.write(account.address)
+st.sidebar.write( account.address )
 
 ##########################################
 # Step 1 - Part 5:
@@ -148,37 +160,35 @@ st.sidebar.write(account.address)
 # Write the returned ether balance to the sidebar
 # YOUR CODE HERE
 
+eth_bal = get_balance( w3 , account.address )
+st.sidebar.write( eth_bal )
+
 ##########################################
 
 # Create a select box to chose a FinTech Hire candidate
-person = st.sidebar.selectbox('Select a Person', people)
+person = st.sidebar.selectbox   ( 'Select a Person' , people )
 
 # Create a input field to record the number of hours the candidate worked
-hours = st.sidebar.number_input("Number of Hours")
+hours  = st.sidebar.number_input( "Number of Hours"          )
 
-st.sidebar.markdown("## Candidate Name, Hourly Rate, and Ethereum Address")
+st.sidebar.markdown( "## Candidate Name, Hourly Rate, and Ethereum Address" )
 
 # Identify the FinTech Hire candidate
-candidate = candidate_database[person][0]
-
-# Write the Fintech Finder candidate's name to the sidebar
-st.sidebar.write(candidate)
-
+candidate         = candidate_db[person][0]
 # Identify the FinTech Finder candidate's hourly rate
-hourly_rate = candidate_database[person][3]
-
-# Write the inTech Finder candidate's hourly rate to the sidebar
-st.sidebar.write(hourly_rate)
-
+hourly_rate       = candidate_db[person][3]
 # Identify the FinTech Finder candidate's Ethereum Address
-candidate_address = candidate_database[person][1]
-
-# Write the inTech Finder candidate's Ethereum Address to the sidebar
-st.sidebar.write(candidate_address)
+candidate_address = candidate_db[person][1]
 
 # Write the Fintech Finder candidate's name to the sidebar
+st.sidebar.write( candidate         )
+# Write the inTech Finder candidate's hourly rate to the sidebar
+st.sidebar.write( hourly_rate       )
+# Write the inTech Finder candidate's Ethereum Address to the sidebar
+st.sidebar.write( candidate_address )
 
-st.sidebar.markdown("## Total Wage in Ether")
+# Write the Fintech Finder candidate's name to the sidebar
+st.sidebar.markdown( "## Total Wage in Ether" )
 
 ################################################################################
 # Step 2: Sign and Execute a Payment Transaction
@@ -193,7 +203,7 @@ st.sidebar.markdown("## Total Wage in Ether")
 
     # * Write the equation that calculates the candidate’s wage. This equation
     #  should assess the candidate’s hourly rate from the candidate database
-    # (`candidate_database[person][3]`) and then multiply this hourly rate by
+    # (`candidate_db[person][3]`) and then multiply this hourly rate by
     # the value of the `hours` variable. Save this calculation’s output as a
     # variable named `wage`.
 
@@ -228,20 +238,25 @@ st.sidebar.markdown("## Total Wage in Ether")
 # Step 2 - Part 1:
 # * Write the equation that calculates the candidate’s wage. This equation
 # should assess the candidate’s hourly rate from the candidate database
-# (`candidate_database[person][3]`) and then multiply this hourly rate by
+# (`candidate_db[person][3]`) and then multiply this hourly rate by
 # the value of the `hours` variable. Save this calculation’s output as a
 # variable named `wage`.
 # * Write the `wage` variable to the Streamlit sidebar by using `st.sidebar.write`.
 
 # @TODO
 # Calculate total `wage` for the candidate by multiplying the candidate’s hourly
-# rate from the candidate database (`candidate_database[person][3]`) by the
+# rate from the candidate database (`candidate_db[person][3]`) by the
 # value of the `hours` variable
 # YOUR CODE HERE
+
+wage = candidate_db[person][3] * hours
+
 
 # @TODO
 # Write the `wage` calculation to the Streamlit sidebar
 # YOUR CODE HERE
+
+st.sidebar.write( wage )
 
 ##########################################
 # Step 2 - Part 2:
@@ -270,14 +285,19 @@ if st.sidebar.button("Send Transaction"):
     # Save the returned transaction hash as a variable named `transaction_hash`
     # YOUR CODE HERE
 
+    transaction_hash = send_transaction        (
+                           w3                ,
+                           account           ,
+                           candidate_address , 
+                           wage              , )
+                    
+
     # Markdown for the transaction hash
-    st.sidebar.markdown("#### Validated Transaction Hash")
-
+    st.sidebar.markdown( "#### Validated Transaction Hash" )
     # Write the returned transaction hash to the screen
-    st.sidebar.write(transaction_hash)
-
+    st.sidebar.write   ( transaction_hash                  )
     # Celebrate your successful payment
-    st.balloons()
+    st.balloons        (                                   )
 
 # The function that starts the Streamlit application
 # Writes FinTech Finder candidates to the Streamlit page
